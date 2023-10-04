@@ -1,8 +1,3 @@
-/*
-
-Ця задача була занадто комплексна, всі мої первинні плани пішли коту під хвіст. Я розібрався по-ходу.
-
-*/
 
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
@@ -54,23 +49,34 @@ const options = {
 
 const fp = flatpickr(datetimePicker, options);
 
+let timerId = null;
+
 function startCounter() {
-    refreshCounters();
-    setInterval(refreshCounters, 1000);
+  datetimePicker.setAttribute("disabled", "");
+  startBtn.setAttribute("disabled", "");
+
+  refreshCounters();
+  timerId = setInterval(refreshCounters, 1000);
 }
 
 function refreshCounters() {
     
-    let difference = fp.selectedDates[0] - new Date();
-    const timeTables = convertMs(difference);
+  let difference = fp.selectedDates[0] - new Date();
+  const timeTables = convertMs(difference);
+  
+  if (difference <= 0) {
+    datetimePicker.removeAttribute("disabled");
+    clearInterval(timerId);
+    return;
+  }
     
-    daysDisplay.textContent = addLeadingZero(timeTables.days);
+  daysDisplay.textContent = addLeadingZero(timeTables.days);
 
-    hoursDisplay.textContent = addLeadingZero(timeTables.hours);
+  hoursDisplay.textContent = addLeadingZero(timeTables.hours);
 
-    minutesDisplay.textContent = addLeadingZero(timeTables.minutes);
+  minutesDisplay.textContent = addLeadingZero(timeTables.minutes);
 
-    secondsDisplay.textContent = addLeadingZero(timeTables.seconds);
+  secondsDisplay.textContent = addLeadingZero(timeTables.seconds);
 }
 
 function convertMs(ms) {
